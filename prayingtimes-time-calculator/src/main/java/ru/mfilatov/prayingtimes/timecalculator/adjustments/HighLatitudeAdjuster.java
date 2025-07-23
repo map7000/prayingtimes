@@ -101,13 +101,41 @@ public class HighLatitudeAdjuster {
     }
   }
 
-  private static void applyMinimalTimes(PrayerTimes times, CalculationParameters params) {
+  public static void applyMinimalTimes(PrayerTimes times, CalculationParameters params) {
+    if (times == null || params == null) return;
+
+    // Apply minimal Fajr window (before sunrise)
     if (times.getFajr() == null && times.getSunrise() != null) {
-      times.setFajr(times.getSunrise().minusMinutes(params.getMinimalFajrMinutes()));
+      int fajrMinutes = params.getMinimalFajrMinutes();
+      times.setFajr(times.getSunrise().minusMinutes(fajrMinutes));
+
+      // Ensure Fajr doesn't cross midnight
+      if (times.getFajr().isAfter(times.getSunrise())) {
+        times.setFajr(times.getSunrise().minusMinutes(120)); // Default 2hr fallback
+      }
     }
 
+    // Apply minimal Isha window (after Maghrib)
     if (times.getIsha() == null && times.getMaghrib() != null) {
-      times.setIsha(times.getMaghrib().plusMinutes(params.getMinimalIshaMinutes()));
+      int ishaMinutes = params.getMinimalIshaMinutes();
+      times.setIsha(times.getMaghrib().plusMinutes(ishaMinutes));
+
+      // Ensure Isha doesn't cross midnight
+      if (times.getIsha().isBefore(times.getMaghrib())) {
+        times.setIsha(times.getMaghrib().plusMinutes(90)); // Default 1.5hr fallback
+      }
+    }
+
+    // Polar night handling - fixed times when no sunrise
+    if (times.getSunrise() == null) {
+      times.setFajr(LocalTime.of(6, 0));  // Default: 6 AM
+      times.setSunrise(null);             // Explicitly mark as no sunrise
+    }
+
+    // Polar day handling - fixed times when no sunset
+    if (times.getMaghrib() == null) {
+      times.setMaghrib(LocalTime.of(18, 0)); // Default: 6 PM
+      times.setIsha(times.getMaghrib().plusMinutes(90));
     }
   }
 

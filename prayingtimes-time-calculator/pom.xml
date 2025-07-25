@@ -13,7 +13,6 @@
     <artifactId>prayingtimes-time-calculator</artifactId>
     <name>PrayingTimes Calculator</name>
     <description>Core library for calculating Islamic prayer times based on geographical coordinates</description>
-
     <dependencies>
         <!-- Core Dependencies -->
         <dependency>
@@ -51,6 +50,13 @@
             <artifactId>hamcrest</artifactId>
             <version>2.2</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.mfilatov.prayingtimes</groupId>
+            <artifactId>prayingtimes-models</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

@@ -2,7 +2,7 @@
 * Copyright 2025 Mikhail Filatov
 * SPDX-License-Identifier: Apache-2.0
 */
-package ru.mfilatov.prayingtimes.timecalculator.models;
+package ru.mfilatov.prayingtimes.models;
 
 import java.time.LocalTime;
 import lombok.AllArgsConstructor;

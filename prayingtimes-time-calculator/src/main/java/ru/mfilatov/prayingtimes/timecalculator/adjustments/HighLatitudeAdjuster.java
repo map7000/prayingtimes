@@ -9,9 +9,9 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import ru.mfilatov.prayingtimes.models.GeoLocation;
+import ru.mfilatov.prayingtimes.models.PrayerTimes;
 import ru.mfilatov.prayingtimes.timecalculator.models.CalculationParameters;
-import ru.mfilatov.prayingtimes.timecalculator.models.GeoLocation;
-import ru.mfilatov.prayingtimes.timecalculator.models.PrayerTimes;
 import ru.mfilatov.prayingtimes.timecalculator.utils.NightPortion;
 
 /** Handles prayer time adjustments for locations above 45° latitude */
@@ -128,8 +128,8 @@ public class HighLatitudeAdjuster {
 
     // Polar night handling - fixed times when no sunrise
     if (times.getSunrise() == null) {
-      times.setFajr(LocalTime.of(6, 0));  // Default: 6 AM
-      times.setSunrise(null);             // Explicitly mark as no sunrise
+      times.setFajr(LocalTime.of(6, 0)); // Default: 6 AM
+      times.setSunrise(null); // Explicitly mark as no sunrise
     }
 
     // Polar day handling - fixed times when no sunset

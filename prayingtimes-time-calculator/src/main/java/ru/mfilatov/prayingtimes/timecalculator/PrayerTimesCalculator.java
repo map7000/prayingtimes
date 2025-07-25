@@ -5,12 +5,12 @@
 package ru.mfilatov.prayingtimes.timecalculator;
 
 import java.time.LocalDate;
+import ru.mfilatov.prayingtimes.models.GeoLocation;
+import ru.mfilatov.prayingtimes.models.PrayerTimes;
 import ru.mfilatov.prayingtimes.timecalculator.adjustments.HighLatitudeAdjuster;
 import ru.mfilatov.prayingtimes.timecalculator.adjustments.MinuteAdjustments;
 import ru.mfilatov.prayingtimes.timecalculator.adjustments.PolarAdjuster;
 import ru.mfilatov.prayingtimes.timecalculator.models.CalculationParameters;
-import ru.mfilatov.prayingtimes.timecalculator.models.GeoLocation;
-import ru.mfilatov.prayingtimes.timecalculator.models.PrayerTimes;
 import ru.mfilatov.prayingtimes.timecalculator.utils.NightPortion;
 import ru.mfilatov.prayingtimes.timecalculator.utils.PolarUtils;
 
@@ -22,7 +22,8 @@ public class PrayerTimesCalculator {
   }
 
   public PrayerTimes calculate(LocalDate date, GeoLocation location) {
-    PrayerCalculationStrategy strategy = getCalculationStrategy();
+    ru.mfilatov.prayingtimes.timecalculator.PrayerCalculationStrategy strategy =
+        getCalculationStrategy();
     PrayerTimes times = strategy.calculatePrayerTimes(date, location);
 
     // Apply adjustments in this order:

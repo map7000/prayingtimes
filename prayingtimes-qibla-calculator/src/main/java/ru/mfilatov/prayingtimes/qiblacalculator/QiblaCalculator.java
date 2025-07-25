@@ -5,8 +5,8 @@
 package ru.mfilatov.prayingtimes.qiblacalculator;
 
 import java.time.LocalDate;
-import ru.mfilatov.prayingtimes.qiblacalculator.geomagnetic.MagneticDeclinationAdapter;
-import ru.mfilatov.prayingtimes.timecalculator.models.GeoLocation;
+import ru.mfilatov.prayingtimes.models.GeoLocation;
+import ru.mfilatov.prayingtimes.qiblacalculator.adapters.MagneticDeclinationAdapter;
 
 public class QiblaCalculator {
 

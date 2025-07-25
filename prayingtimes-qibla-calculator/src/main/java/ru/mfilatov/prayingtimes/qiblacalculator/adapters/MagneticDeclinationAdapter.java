@@ -2,9 +2,11 @@
 * Copyright 2025 Mikhail Filatov
 * SPDX-License-Identifier: Apache-2.0
 */
-package ru.mfilatov.prayingtimes.qiblacalculator.geomagnetic;
+package ru.mfilatov.prayingtimes.qiblacalculator.adapters;
 
 import java.time.LocalDate;
+import ru.mfilatov.prayingtimes.qiblacalculator.geomagnetic.HighOrderDeclination;
+import ru.mfilatov.prayingtimes.qiblacalculator.geomagnetic.WorldMagneticModel;
 
 public class MagneticDeclinationAdapter {
   /**
@@ -17,13 +19,7 @@ public class MagneticDeclinationAdapter {
       return WorldMagneticModel.calculateDeclination(lat, lon, alt, date);
     } catch (Exception e) {
       // Fallback to approximation
-      return approximateDeclination(lat, lon, date.getYear());
+      return HighOrderDeclination.calculate(lat, lon, date);
     }
-  }
-
-  private static double approximateDeclination(double lat, double lon, int year) {
-    // Tenth-order polynomial approximation (accurate to ±1° for 2015-2025)
-    double t = year - 2020;
-    return -7.5 + 0.18 * lon - 0.001 * lon * lon + 0.05 * lat - 0.0005 * lat * lat + 0.05 * t;
   }
 }

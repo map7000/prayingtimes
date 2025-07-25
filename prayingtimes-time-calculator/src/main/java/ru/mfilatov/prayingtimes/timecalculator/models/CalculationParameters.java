@@ -11,8 +11,8 @@ import ru.mfilatov.prayingtimes.timecalculator.adjustments.PolarAdjuster;
 @Data
 @Builder
 public class CalculationParameters {
-  private int minimalFajrMinutes = 90;    // 1.5 hours
-  private int minimalIshaMinutes = 120;   // 2 hours
+  private int minimalFajrMinutes = 90; // 1.5 hours
+  private int minimalIshaMinutes = 120; // 2 hours
 
   // Calculation Method
   private CalculationMethod method;

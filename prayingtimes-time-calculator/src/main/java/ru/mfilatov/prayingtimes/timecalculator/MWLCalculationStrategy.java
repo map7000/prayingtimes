@@ -9,9 +9,9 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import org.apache.commons.math3.util.FastMath;
+import ru.mfilatov.prayingtimes.models.GeoLocation;
+import ru.mfilatov.prayingtimes.models.PrayerTimes;
 import ru.mfilatov.prayingtimes.timecalculator.models.CalculationParameters;
-import ru.mfilatov.prayingtimes.timecalculator.models.GeoLocation;
-import ru.mfilatov.prayingtimes.timecalculator.models.PrayerTimes;
 import ru.mfilatov.prayingtimes.timecalculator.utils.MathUtils;
 
 public class MWLCalculationStrategy implements PrayerCalculationStrategy {

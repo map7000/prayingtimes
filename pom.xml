@@ -16,7 +16,7 @@
         <developer>
             <name>Mikhail Filatov</name>
             <email>map7000@gmail.com</email>
-            <organizationUrl>https://github.com/map7000/prayingtimes-calculator</organizationUrl>
+            <organizationUrl>https://github.com/map7000/prayingtimes</organizationUrl>
         </developer>
     </developers>
 
@@ -31,6 +31,7 @@
         <module>prayingtimes-timeskeeper</module>
         <module>prayingtimes-telegrambot</module>
         <module>prayingtimes-qibla-calculator</module>
+        <module>prayingtimes-models</module>
     </modules>
 
     <properties>

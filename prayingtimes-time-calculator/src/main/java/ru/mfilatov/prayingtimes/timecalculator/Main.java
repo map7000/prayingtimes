@@ -5,9 +5,9 @@
 package ru.mfilatov.prayingtimes.timecalculator;
 
 import java.time.LocalDate;
+import ru.mfilatov.prayingtimes.models.GeoLocation;
+import ru.mfilatov.prayingtimes.models.PrayerTimes;
 import ru.mfilatov.prayingtimes.timecalculator.models.CalculationParameters;
-import ru.mfilatov.prayingtimes.timecalculator.models.GeoLocation;
-import ru.mfilatov.prayingtimes.timecalculator.models.PrayerTimes;
 
 // TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.

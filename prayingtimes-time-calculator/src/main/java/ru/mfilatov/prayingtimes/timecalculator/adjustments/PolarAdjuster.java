@@ -6,9 +6,9 @@ package ru.mfilatov.prayingtimes.timecalculator.adjustments;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import ru.mfilatov.prayingtimes.models.GeoLocation;
+import ru.mfilatov.prayingtimes.models.PrayerTimes;
 import ru.mfilatov.prayingtimes.timecalculator.models.CalculationParameters;
-import ru.mfilatov.prayingtimes.timecalculator.models.GeoLocation;
-import ru.mfilatov.prayingtimes.timecalculator.models.PrayerTimes;
 import ru.mfilatov.prayingtimes.timecalculator.utils.PolarUtils;
 
 public class PolarAdjuster {

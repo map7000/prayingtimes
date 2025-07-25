@@ -5,8 +5,8 @@
 package ru.mfilatov.prayingtimes.timecalculator;
 
 import java.time.LocalDate;
-import ru.mfilatov.prayingtimes.timecalculator.models.GeoLocation;
-import ru.mfilatov.prayingtimes.timecalculator.models.PrayerTimes;
+import ru.mfilatov.prayingtimes.models.GeoLocation;
+import ru.mfilatov.prayingtimes.models.PrayerTimes;
 
 public interface PrayerCalculationStrategy {
   PrayerTimes calculatePrayerTimes(LocalDate date, GeoLocation location);

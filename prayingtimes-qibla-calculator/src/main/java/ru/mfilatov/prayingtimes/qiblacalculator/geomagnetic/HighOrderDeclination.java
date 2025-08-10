@@ -5,6 +5,7 @@
 package ru.mfilatov.prayingtimes.qiblacalculator.geomagnetic;
 
 import java.time.LocalDate;
+import ru.mfilatov.prayingtimes.models.GeoLocation;
 
 /**
  * 10th-order polynomial approximation of magnetic declination
@@ -67,22 +68,20 @@ public class HighOrderDeclination {
   }
 
   /** Full declination calculation with Horner-optimized polynomial */
-  public static double calculate(double latitude, double longitude, double year) {
-    validateInput(latitude, longitude, year);
+  public static double calculateDeclination(GeoLocation location, LocalDate date) {
+    validateInput(location.getLatitude(), location.getLongitude(), date.getYear());
 
-    double[] coeffs = getCoefficients(latitude, longitude);
-    double t = year - 2020.0;
-    double y = latitude / 90.0; // Normalized latitude
+    double decimalYear = getDecimalYear(date);
+
+    double[] coeffs = getCoefficients(location.getLatitude(), location.getLongitude());
+    double t = decimalYear - 2020.0;
+    double y = location.getLatitude() / 90.0; // Normalized latitude
 
     // Evaluate polynomial using Horner's method
     double latComponent = evaluatePolynomial(y, coeffs);
-    double lonComponent = coeffs[11] * (longitude / 180.0);
+    double lonComponent = coeffs[11] * (location.getLongitude() / 180.0);
 
     return latComponent + lonComponent + coeffs[12] * t;
-  }
-
-  public static double calculate(double latitude, double longitude, LocalDate date) {
-    return calculate(latitude, longitude, getDecimalYear(date));
   }
 
   private static double[] getCoefficients(double lat, double lon) {

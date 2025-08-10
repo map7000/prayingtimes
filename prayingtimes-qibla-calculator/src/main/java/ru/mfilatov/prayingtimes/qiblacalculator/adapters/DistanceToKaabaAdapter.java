@@ -20,19 +20,13 @@ public class DistanceToKaabaAdapter {
     PLANAR // Simple planar approximation (small distances only)
   }
 
-  private final DistanceMethod method;
-
-  public DistanceToKaabaAdapter(DistanceMethod method) {
-    this.method = method;
-  }
-
   /**
    * Calculate distance to Kaaba using configured method
    *
    * @param location Observer's location
    * @return Distance in meters
    */
-  public double calculateDistance(GeoLocation location) {
+  public static double calculateDistance(GeoLocation location, DistanceMethod method) {
     return switch (method) {
       case VINCENTY -> VincentyDistanceCalculator.calculateDistance(KAABA_LOCATION, location);
       case PLANAR -> PlanarDistanceCalculator.calculateDistance(KAABA_LOCATION, location);

@@ -10,8 +10,8 @@ import ru.mfilatov.prayingtimes.models.GeoLocation;
  * Calculates the initial bearing between two points using planar approximation. This method is
  * suitable for short distances where Earth's curvature can be neglected.
  */
-public class PlanarApproximation {
-  public static double calculateBearing(GeoLocation point1, GeoLocation point2) {
+public class PlanarApproximation implements BearingCalculator{
+  public double calculateBearing(GeoLocation point1, GeoLocation point2) {
     // Convert latitude and longitude from degrees to radians
     double lat1Rad = Math.toRadians(point1.getLatitude());
     double lon1Rad = Math.toRadians(point1.getLongitude());

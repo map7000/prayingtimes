@@ -4,6 +4,8 @@
 */
 package ru.mfilatov.prayingtimes.qiblacalculator.adapters;
 
+import static ru.mfilatov.prayingtimes.models.Constants.KAABA_LOCATION;
+
 import ru.mfilatov.prayingtimes.models.GeoLocation;
 import ru.mfilatov.prayingtimes.qiblacalculator.direction.GreatCircle;
 import ru.mfilatov.prayingtimes.qiblacalculator.direction.PlanarApproximation;
@@ -22,35 +24,30 @@ public class TrueDirectionAdapter {
   }
 
   /**
-   * Calculate true bearing from point1 to point2
+   * Calculate true bearing from point
    *
-   * @param point1 Starting location
-   * @param point2 Target location
+   * @param point Starting location
    * @param method Preferred calculation method
    * @return Bearing in degrees (0° = true North, clockwise)
    * @throws IllegalArgumentException for invalid coordinates
    */
-  public static double calculateBearing(
-      GeoLocation point1, GeoLocation point2, CalculationMethod method) {
+  public static double calculateBearing(GeoLocation point, CalculationMethod method) {
 
-    validateCoordinates(point1, point2);
+    validateCoordinates(point);
 
     return switch (method) {
-      case VINCENTY -> Vincenty.calculateBearing(point1, point2);
-      case GREAT_CIRCLE -> GreatCircle.calculateBearing(point1, point2);
-      case PLANAR -> PlanarApproximation.calculateBearing(point1, point2);
+      case VINCENTY -> new Vincenty().calculateBearing(point, KAABA_LOCATION);
+      case GREAT_CIRCLE -> new GreatCircle().calculateBearing(point, KAABA_LOCATION);
+      case PLANAR -> new PlanarApproximation().calculateBearing(point, KAABA_LOCATION);
       default -> throw new IllegalArgumentException("Unsupported method");
     };
   }
 
-  private static void validateCoordinates(GeoLocation p1, GeoLocation p2) {
-    if (p1 == null || p2 == null) {
+  private static void validateCoordinates(GeoLocation p) {
+    if (p == null) {
       throw new IllegalArgumentException("Locations cannot be null");
     }
-    if (Double.isNaN(p1.getLatitude())
-        || Double.isNaN(p1.getLongitude())
-        || Double.isNaN(p2.getLatitude())
-        || Double.isNaN(p2.getLongitude())) {
+    if (Double.isNaN(p.getLatitude()) || Double.isNaN(p.getLongitude())) {
       throw new IllegalArgumentException("Invalid coordinate values");
     }
   }

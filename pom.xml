@@ -45,7 +45,8 @@
         <!-- Dependency versions -->
         <spring-boot.version>3.2.0</spring-boot.version>
         <lombok.version>1.18.30</lombok.version>
-        <junit.version>5.10.0</junit.version>
+        <junit.version>5.13.4</junit.version>
+        <assertj.version>3.27.4</assertj.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
 
         <!-- Plugin Versions -->
@@ -77,10 +78,25 @@
                 <scope>provided</scope>
             </dependency>
 
+            <!-- JUnit 5 -->
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
                 <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- AssertJ -->
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj.version}</version>
                 <scope>test</scope>
             </dependency>
 

@@ -7,6 +7,7 @@ package ru.mfilatov.prayingtimes.qiblacalculator.geomagnetic;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import ru.mfilatov.prayingtimes.models.GeoLocation;
 
 public class WorldMagneticModel {
   private static final List<double[]> coefficients;
@@ -26,16 +27,16 @@ public class WorldMagneticModel {
   /**
    * Calculate magnetic declination for given location and date
    *
-   * @param latitude Decimal degrees [-90, 90]
-   * @param longitude Decimal degrees [-180, 180]
-   * @param elevation Meters above WGS84 ellipsoid
+   * @param location Target location
    * @param date Calculation date (must be between 2025-2030)
    * @return Magnetic declination in degrees (East positive)
    */
-  public static double calculateDeclination(
-      double latitude, double longitude, double elevation, LocalDate date) {
+  public static double calculateDeclination(GeoLocation location, LocalDate date) {
     // Validate input
-    if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+    if (location.getLatitude() < -90
+        || location.getLatitude() > 90
+        || location.getLongitude() < -180
+        || location.getLongitude() > 180) {
       throw new IllegalArgumentException("Invalid coordinates");
     }
 
@@ -45,9 +46,9 @@ public class WorldMagneticModel {
     }
 
     // Convert to spherical coordinates
-    double phi = Math.toRadians(latitude);
-    double lambda = Math.toRadians(longitude);
-    double r = EARTH_RADIUS_KM + (elevation / 1000);
+    double phi = Math.toRadians(location.getLatitude());
+    double lambda = Math.toRadians(location.getLongitude());
+    double r = EARTH_RADIUS_KM + (location.getElevation() / 1000);
 
     // Calculate magnetic field components
     MagneticField field = calculateField(phi, lambda, r, decimalYear);

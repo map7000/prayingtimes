@@ -10,7 +10,7 @@ import ru.mfilatov.prayingtimes.models.GeoLocation;
  * High-precision Qibla direction calculator using Vincenty's inverse formula on the WGS84 ellipsoid
  * model of the Earth.
  */
-public class Vincenty implements BearingCalculator{
+public class VincentyCalculator implements BearingCalculator {
   // WGS84 ellipsoid parameters
   private static final double SEMI_MAJOR_AXIS = 6378137.0; // meters
   private static final double FLATTENING = 1 / 298.257223563;
@@ -93,6 +93,10 @@ public class Vincenty implements BearingCalculator{
         Math.atan2(
             cosReducedLat2 * Math.sin(lambda),
             cosReducedLat1 * sinReducedLat2 - sinReducedLat1 * cosReducedLat2 * Math.cos(lambda));
+
+    if (Double.isNaN(forwardAzimuth)) {
+      return 0;
+    }
 
     // Convert to degrees and normalize to 0-360
     return (Math.toDegrees(forwardAzimuth) + 360) % 360;

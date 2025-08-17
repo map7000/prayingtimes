@@ -6,20 +6,29 @@ package ru.mfilatov.prayingtimes.qiblacalculator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
+import static ru.mfilatov.prayingtimes.models.Constants.KAABA_LOCATION;
 
-import org.junit.jupiter.api.Test;
+import java.util.stream.Stream;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import ru.mfilatov.prayingtimes.models.GeoLocation;
+import ru.mfilatov.prayingtimes.qiblacalculator.direction.BearingCalculator;
+import ru.mfilatov.prayingtimes.qiblacalculator.direction.GreatCircleCalculator;
+import ru.mfilatov.prayingtimes.qiblacalculator.direction.PlanarApproximationCalculator;
+import ru.mfilatov.prayingtimes.qiblacalculator.direction.VincentyCalculator;
 
 public class BearingKnowPlacesTest {
 
   private static final double QIBLA_PRECISION = 1.0; // 1 degree precision for Qibla tests
   private static final double PRECISION = 0.0001;
-  private static final GeoLocation KAABA = new GeoLocation(21.4225, 39.8262, 0, "Asia/Riyadh");
 
   // Test data from established Qibla calculation sources
   private static final Object[][] KNOWN_QIBLAS = {
     // City, Lat, Lon, Expected Qibla (degrees from North)
-    {"Mecca", 21.4225, 39.8262, 0.0}, // Facing the Kaaba while at Kaaba
+    {
+      "Mecca", KAABA_LOCATION.getLatitude(), KAABA_LOCATION.getLongitude(), 0.0
+    }, // Facing the Kaaba while at Kaaba
     {"Medina", 24.4667, 39.6000, 165.0},
     {"Jerusalem", 31.7833, 35.2167, 158.0},
     {"Cairo", 30.0444, 31.2357, 136.0},
@@ -34,8 +43,9 @@ public class BearingKnowPlacesTest {
     {"Cape Town", -33.9249, 18.4241, 90.0}
   };
 
-  @Test
-  public void testKnownQiblaDirections() {
+  @ParameterizedTest
+  @MethodSource("bearingCalculators")
+  public void testKnownQiblaDirections(String calculatorName, BearingCalculator calculator) {
     for (Object[] data : KNOWN_QIBLAS) {
       String city = (String) data[0];
       double lat = (Double) data[1];
@@ -43,24 +53,35 @@ public class BearingKnowPlacesTest {
       double expected = (Double) data[3];
 
       GeoLocation location = new GeoLocation(lat, lon, 0, "UTC");
-      assertThat(calculateBearing(location, KAABA))
+      assertThat(calculator.calculateBearing(location, KAABA_LOCATION))
           .as("Qibla direction for %s", city)
           .isCloseTo(expected, within(QIBLA_PRECISION));
     }
   }
 
-  @Test
-  public void testSpecialCases() {
+  @ParameterizedTest
+  @MethodSource("bearingCalculators")
+  public void testSpecialCases(String calculatorName, BearingCalculator calculator) {
     // North Pole should face south to Kaaba
     GeoLocation northPole = new GeoLocation(90.0, 0.0, 0, "UTC");
-    assertThat(calculateBearing(northPole, KAABA)).isCloseTo(180.0, within(PRECISION));
+    assertThat(calculator.calculateBearing(northPole, KAABA_LOCATION))
+        .isCloseTo(180.0, within(PRECISION));
 
     // South Pole should face north to Kaaba
     GeoLocation southPole = new GeoLocation(-90.0, 0.0, 0, "UTC");
-    assertThat(calculateBearing(southPole, KAABA)).isCloseTo(0.0, within(PRECISION));
+    assertThat(calculator.calculateBearing(southPole, KAABA_LOCATION))
+        .isCloseTo(0.0, within(PRECISION));
 
     // Locations where bearing wraps around 360°
     GeoLocation westernAlaska = new GeoLocation(65.0, -168.0, 0, "America/Anchorage");
-    assertThat(calculateBearing(westernAlaska, KAABA)).isCloseTo(340.0, within(QIBLA_PRECISION));
+    assertThat(calculator.calculateBearing(westernAlaska, KAABA_LOCATION))
+        .isCloseTo(340.0, within(QIBLA_PRECISION));
+  }
+
+  static Stream<Arguments> bearingCalculators() {
+    return Stream.of(
+        Arguments.of("GreatCircle", new GreatCircleCalculator()),
+        Arguments.of("PlanarApproximation", new PlanarApproximationCalculator()),
+        Arguments.of("Vincenty", new VincentyCalculator()));
   }
 }

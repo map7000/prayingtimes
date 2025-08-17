@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PrayerTimes {
+  private LocalTime imsak;
   private LocalTime fajr;
   private LocalTime sunrise;
   private LocalTime dhuhr;
@@ -20,4 +21,5 @@ public class PrayerTimes {
   private LocalTime maghrib;
   private LocalTime sunset;
   private LocalTime isha;
+  private LocalTime midnight;
 }

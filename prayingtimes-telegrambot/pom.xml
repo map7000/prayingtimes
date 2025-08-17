@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>prayingtimes-telegrambot</artifactId>
-    <name>Praying Times Telegram Bot</name>
+    <name>prayingtimes-telegrambot</name>
     <description>A simple telegram bot  what can tell you praying time in your area</description>
 
 </project>

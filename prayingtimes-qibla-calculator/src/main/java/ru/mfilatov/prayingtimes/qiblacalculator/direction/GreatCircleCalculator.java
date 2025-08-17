@@ -12,7 +12,7 @@ import ru.mfilatov.prayingtimes.models.GeoLocation;
  *
  * <p>Accuracy: ±0.1° for distances <20,000 km Reference: Sinnott, "Virtues of the Haversine" (1984)
  */
-public class GreatCircle implements BearingCalculator{
+public class GreatCircleCalculator implements BearingCalculator {
 
   /**
    * Calculate initial bearing (forward azimuth) between two points

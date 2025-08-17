@@ -7,9 +7,9 @@ package ru.mfilatov.prayingtimes.qiblacalculator.adapters;
 import static ru.mfilatov.prayingtimes.models.Constants.KAABA_LOCATION;
 
 import ru.mfilatov.prayingtimes.models.GeoLocation;
-import ru.mfilatov.prayingtimes.qiblacalculator.direction.GreatCircle;
-import ru.mfilatov.prayingtimes.qiblacalculator.direction.PlanarApproximation;
-import ru.mfilatov.prayingtimes.qiblacalculator.direction.Vincenty;
+import ru.mfilatov.prayingtimes.qiblacalculator.direction.GreatCircleCalculator;
+import ru.mfilatov.prayingtimes.qiblacalculator.direction.PlanarApproximationCalculator;
+import ru.mfilatov.prayingtimes.qiblacalculator.direction.VincentyCalculator;
 
 /**
  * Calculates true direction/bearing between points using multiple methods with automatic fallback
@@ -36,9 +36,9 @@ public class TrueDirectionAdapter {
     validateCoordinates(point);
 
     return switch (method) {
-      case VINCENTY -> new Vincenty().calculateBearing(point, KAABA_LOCATION);
-      case GREAT_CIRCLE -> new GreatCircle().calculateBearing(point, KAABA_LOCATION);
-      case PLANAR -> new PlanarApproximation().calculateBearing(point, KAABA_LOCATION);
+      case VINCENTY -> new VincentyCalculator().calculateBearing(point, KAABA_LOCATION);
+      case GREAT_CIRCLE -> new GreatCircleCalculator().calculateBearing(point, KAABA_LOCATION);
+      case PLANAR -> new PlanarApproximationCalculator().calculateBearing(point, KAABA_LOCATION);
       default -> throw new IllegalArgumentException("Unsupported method");
     };
   }

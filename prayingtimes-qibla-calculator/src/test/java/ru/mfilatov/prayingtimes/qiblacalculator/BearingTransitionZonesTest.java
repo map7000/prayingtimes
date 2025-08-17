@@ -8,49 +8,58 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 import static ru.mfilatov.prayingtimes.models.Constants.KAABA_LOCATION;
 
-import org.junit.jupiter.api.Test;
+import java.util.stream.Stream;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import ru.mfilatov.prayingtimes.models.GeoLocation;
+import ru.mfilatov.prayingtimes.qiblacalculator.direction.BearingCalculator;
+import ru.mfilatov.prayingtimes.qiblacalculator.direction.GreatCircleCalculator;
+import ru.mfilatov.prayingtimes.qiblacalculator.direction.PlanarApproximationCalculator;
+import ru.mfilatov.prayingtimes.qiblacalculator.direction.VincentyCalculator;
 
 public class BearingTransitionZonesTest {
 
   private static final double PRECISION = 1.0;
 
-  @Test
-  public void testNorthAmericaTransitionZone() {
+  @ParameterizedTest
+  @MethodSource("bearingCalculators")
+  public void testNorthAmericaTransitionZone(String calculatorName, BearingCalculator calculator) {
     // Test locations near the "Qibla flip" line in North America
     // where direction changes from Northeast to Southeast
 
     // West of transition line (should face northeast)
     GeoLocation seattle = new GeoLocation(47.6062, -122.3321, 0, "America/Los_Angeles");
-    assertThat(calculateBearing(seattle, KAABA_LOCATION)).isCloseTo(18.0, within(2.0));
+    assertThat(calculator.calculateBearing(seattle, KAABA_LOCATION)).isCloseTo(18.0, within(2.0));
 
     // East of transition line (should face southeast)
     GeoLocation chicago = new GeoLocation(41.8781, -87.6298, 0, "America/Chicago");
-    assertThat(calculateBearing(chicago, KAABA_LOCATION)).isCloseTo(52.0, within(2.0));
+    assertThat(calculator.calculateBearing(chicago, KAABA_LOCATION)).isCloseTo(52.0, within(2.0));
 
     // Very close locations straddling the transition line
     GeoLocation pointA = new GeoLocation(39.0, -96.0, 0, "America/Chicago");
     GeoLocation pointB = new GeoLocation(39.0, -97.0, 0, "America/Chicago");
 
-    double bearingA = calculateBearing(pointA, KAABA_LOCATION);
-    double bearingB = calculateBearing(pointB, KAABA_LOCATION);
+    double bearingA = calculator.calculateBearing(pointA, KAABA_LOCATION);
+    double bearingB = calculator.calculateBearing(pointB, KAABA_LOCATION);
 
     assertThat(Math.abs(bearingA - bearingB))
         .as("Qibla direction difference across 1 degree longitude near transition")
         .isGreaterThan(100.0);
   }
 
-  @Test
-  public void testPacificOceanTransition() {
+  @ParameterizedTest
+  @MethodSource("bearingCalculators")
+  public void testPacificOceanTransition(String calculatorName, BearingCalculator calculator) {
     // Test locations where bearing changes dramatically across the Pacific
 
     // West of transition (facing northwest)
     GeoLocation honolulu = new GeoLocation(21.3069, -157.8583, 0, "Pacific/Honolulu");
-    assertThat(calculateBearing(honolulu, KAABA_LOCATION)).isCloseTo(344.0, within(2.0));
+    assertThat(calculator.calculateBearing(honolulu, KAABA_LOCATION)).isCloseTo(344.0, within(2.0));
 
     // East of transition (facing northeast)
     GeoLocation laPaz = new GeoLocation(-16.4897, -68.1193, 0, "America/La_Paz");
-    assertThat(calculateBearing(laPaz, KAABA_LOCATION)).isCloseTo(65.0, within(2.0));
+    assertThat(calculator.calculateBearing(laPaz, KAABA_LOCATION)).isCloseTo(65.0, within(2.0));
 
     // Small distance, big bearing change
     GeoLocation point1 = new GeoLocation(0.0, -150.0, 0, "Pacific/Tahiti");
@@ -58,14 +67,15 @@ public class BearingTransitionZonesTest {
 
     assertThat(
             Math.abs(
-                calculateBearing(point1, KAABA_LOCATION)
-                    - calculateBearing(point2, KAABA_LOCATION)))
+                calculator.calculateBearing(point1, KAABA_LOCATION)
+                    - calculator.calculateBearing(point2, KAABA_LOCATION)))
         .as("Bearing difference across 10 degrees longitude in Pacific")
         .isGreaterThan(50.0);
   }
 
-  @Test
-  public void testAntipodalRegion() {
+  @ParameterizedTest
+  @MethodSource("bearingCalculators")
+  public void testAntipodalRegion(String calculatorName, BearingCalculator calculator) {
     // Near the antipodal point (opposite side of Earth from KAABA_LOCATION)
     // where small movements create huge bearing changes
 
@@ -73,8 +83,8 @@ public class BearingTransitionZonesTest {
     GeoLocation offsetPoint =
         new GeoLocation(-21.4225, -140.2738, 0, "Pacific/Tahiti"); // 0.1° west
 
-    double baseBearing = calculateBearing(basePoint, KAABA_LOCATION);
-    double offsetBearing = calculateBearing(offsetPoint, KAABA_LOCATION);
+    double baseBearing = calculator.calculateBearing(basePoint, KAABA_LOCATION);
+    double offsetBearing = calculator.calculateBearing(offsetPoint, KAABA_LOCATION);
 
     // Bearing should change dramatically with small position changes
     assertThat(Math.abs(baseBearing - offsetBearing))
@@ -82,8 +92,9 @@ public class BearingTransitionZonesTest {
         .isGreaterThan(45.0);
   }
 
-  @Test
-  public void testSoutheastAsiaTransition() {
+  @ParameterizedTest
+  @MethodSource("bearingCalculators")
+  public void testSoutheastAsiaTransition(String calculatorName, BearingCalculator calculator) {
     // Test locations near the transition in Southeast Asia
     // where mosques on different sides of a street might face different directions
 
@@ -92,9 +103,16 @@ public class BearingTransitionZonesTest {
 
     assertThat(
             Math.abs(
-                calculateBearing(point1, KAABA_LOCATION)
-                    - calculateBearing(point2, KAABA_LOCATION)))
+                calculator.calculateBearing(point1, KAABA_LOCATION)
+                    - calculator.calculateBearing(point2, KAABA_LOCATION)))
         .as("Qibla direction difference in Malaysia transition zone")
         .isGreaterThan(30.0);
+  }
+
+  static Stream<Arguments> bearingCalculators() {
+    return Stream.of(
+        Arguments.of("GreatCircle", new GreatCircleCalculator()),
+        Arguments.of("PlanarApproximation", new PlanarApproximationCalculator()),
+        Arguments.of("Vincenty", new VincentyCalculator()));
   }
 }

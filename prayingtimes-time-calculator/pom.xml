@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>prayingtimes-time-calculator</artifactId>
-    <name>PrayingTimes Calculator</name>
+    <name>prayingtimes-time-calculator</name>
     <description>Core library for calculating Islamic prayer times based on geographical coordinates</description>
     <dependencies>
         <!-- Core Dependencies -->

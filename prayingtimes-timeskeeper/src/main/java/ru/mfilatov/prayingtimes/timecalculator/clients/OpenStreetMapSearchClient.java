@@ -17,6 +17,5 @@ public interface OpenStreetMapSearchClient {
   List<SearchJsonV2> getCityLocation(
       @RequestParam(value = "city") String city,
       @RequestParam(value = "country") String country,
-      @RequestParam(value = "format") String format,
-      @RequestParam(value = "addressdetails") String addressdetails);
+      @RequestParam(value = "format") String format);
 }

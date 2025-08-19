@@ -22,6 +22,9 @@ public class PrayingTimesCalculatorImpl {
     CalculationParameters parameters = CalculationParameters.getDefault(method);
     PrayerTimesCalculator calculator = new PrayerTimesCalculator(parameters);
 
-    return calculator.calculate(time, new GeoLocation(coordinates.getLatitude(), coordinates.getLongitude(), 0 ,timeZone.getID()));
+    return calculator.calculate(
+        time,
+        new GeoLocation(
+            coordinates.getLatitude(), coordinates.getLongitude(), 0, timeZone.getID()));
   }
 }

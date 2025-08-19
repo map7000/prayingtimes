@@ -20,7 +20,7 @@ public class OpenStreetMapCoordinatesProvider implements CoordinatesProvider {
 
   @Override
   public GeoLocation getCoordinatesByCityName(String city, String country) {
-    var response = client.getCityLocation(city, country, "jsonv2", "1").getFirst();
+    var response = client.getCityLocation(city, country, "jsonv2").getFirst();
     return new GeoLocation(response.lat(), response.lon());
   }
 }

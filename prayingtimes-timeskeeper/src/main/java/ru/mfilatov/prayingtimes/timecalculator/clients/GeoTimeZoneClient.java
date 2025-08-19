@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.mfilatov.prayingtimes.timecalculator.model.geotimezone.GeoTimeZone;
 
-@FeignClient(value = "geoTimeZoneClient", url = "https://api.geotimezone.com/public/")
+@FeignClient(value = "geoTimeZoneClient", url = "${timezone.api.base-url:https://api.geotimezone.com/public/")
 public interface GeoTimeZoneClient {
   @GetMapping(path = "timezone")
   GeoTimeZone getTimeZone(

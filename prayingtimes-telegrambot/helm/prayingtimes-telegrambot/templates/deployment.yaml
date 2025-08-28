@@ -38,6 +38,11 @@ spec:
                 configMapKeyRef:
                   name: prayingtymes-telegrambot-config
                   key: timeskeeper_url
+            - name: LOCATION_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: prayingtymes-telegrambot-config
+                  key: location_url
             - name: DATABASE_URL
               valueFrom:
                 configMapKeyRef:

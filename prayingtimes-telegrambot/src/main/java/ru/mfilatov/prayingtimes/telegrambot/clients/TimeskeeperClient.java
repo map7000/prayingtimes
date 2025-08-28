@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.mfilatov.prayingtimes.models.PrayerTimes;
 import ru.mfilatov.prayingtimes.models.PrayerTimesCalculationMethod;
 
-@FeignClient(value = "timeskeeperClient", url = "${api.timeskeeper.url}")
+@FeignClient(
+    value = "timeskeeperClient",
+    url = "${api.timeskeeper.url:localhost:8080/api/prayer-times}")
 public interface TimeskeeperClient {
-  @GetMapping(path = "getTimes")
+  @GetMapping(path = "/getTimes")
   ResponseEntity<PrayerTimes> getTimes(
       @RequestParam(value = "date") @Valid String date,
       @RequestParam(value = "latitude") @Valid Double latitude,

@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
@@ -38,7 +37,7 @@ public class PrayingTimesAzanBot
   private final EventHandler events;
   private final UserRepository users;
   private final RateLimiterService rateLimiter;
-  private final String botToken;
+  private final String botToken = "2025563729:AAGSpdD2QKEISDJylxxP7gmmf0CG8Izbw5k";
 
   private static final Pattern ALPHANUMERIC_PATTERN = Pattern.compile("^[a-zA-Z0-9\\s.,!/?-_]+$");
 
@@ -46,13 +45,14 @@ public class PrayingTimesAzanBot
       TimeskeeperClient client,
       EventHandler events,
       UserRepository users,
-      RateLimiterService rateLimiter,
-      @Value("${BOT_TOKEN}") String token) {
+      RateLimiterService rateLimiter
+      //      @Value("${BOT_TOKEN}") String token
+      ) {
     this.client = client;
     this.events = events;
     this.users = users;
     this.rateLimiter = rateLimiter;
-    this.botToken = token;
+    //    this.botToken = token;
 
     this.telegramClient = new OkHttpTelegramClient(getBotToken());
   }

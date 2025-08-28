@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.mfilatov.prayingtimes.timecalculator.model.openstreetmap.SearchJsonV2;
 
-@FeignClient(value = "openStreetMapSearchClient", url = "${location.api.base-url:https://nominatim.openstreetmap.org/")
+@FeignClient(
+    value = "openStreetMapSearchClient",
+    url = "${location.api.base-url:https://nominatim.openstreetmap.org/}")
 public interface OpenStreetMapSearchClient {
 
   @GetMapping(path = "search")

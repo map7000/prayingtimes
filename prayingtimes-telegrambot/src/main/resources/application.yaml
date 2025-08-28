@@ -1,0 +1,26 @@
+server:
+  port: 8080
+  shutdown: graceful
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+    context-path: /
+
+api:
+  timeskeeper:
+    url: ${TIMESKEEPER_URL:http://localhost:8080/api/prayer-times}
+  location:
+    url: ${LOCATION_URL:http://localhost:8080/api/location}
+
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/postgres}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: update

@@ -9,14 +9,14 @@ server:
     context-path: /
 
 aladhan:
-  api:
-    base-url: https://api.aladhan.com/v1/timings
-  delay: 1000
+ api:
+  base-url: https://api.aladhan.com/v1/timings
+ delay: 1000
 
 timezone:
-  api:
-    base-url: https://api.geotimezone.com/public
-  delay: 1000
+ api:
+  base-url: https://api.geotimezone.com/public
+ delay: 1000
 
 location:
   api:

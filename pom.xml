@@ -49,6 +49,7 @@
         <junit.version>5.13.4</junit.version>
         <assertj.version>3.27.4</assertj.version>
         <mapstruct.version>1.6.3</mapstruct.version>
+        <telegram-bot-api.version>9.0.0</telegram-bot-api.version>
 
         <!-- Plugin Versions -->
         <compiler.version>3.14.0</compiler.version>

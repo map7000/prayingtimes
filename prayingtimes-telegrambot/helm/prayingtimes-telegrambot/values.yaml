@@ -20,4 +20,8 @@ timeskeeperUrl: "http://prayingtymes-timeskeeper-service:8080/api/prayer-times"
 locationUrl: "http://prayingtymes-timeskeeper-service:8080/api/location"
 databaseUrl: "jdbc:postgresql://postgresql:5432/postgres"
 
+bot_token: ""
+database_username: postgres
+database_password: ""
+
 javaOptions: "-Dspring.config.location=classpath:/application.yaml -XX:InitialRAMPercentage=25.0 -XX:MaxRAMPercentage=75.0"

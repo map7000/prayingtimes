@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prayingtymes-timeskeeper-deployment
+  labels:
+    app: prayingtymes-timeskeeper
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: prayingtymes-timeskeeper
+  template:
+    metadata:
+      labels:
+        app: prayingtymes-timeskeeper
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp-volume
+          env:
+            - name: JDK_JAVA_OPTIONS
+              valueFrom:
+                configMapKeyRef:
+                  name: prayingtymes-timeskeeper-config
+                  key: java_options
+      volumes:
+        - name: tmp-volume
+          emptyDir:
+            sizeLimit: 100Mi

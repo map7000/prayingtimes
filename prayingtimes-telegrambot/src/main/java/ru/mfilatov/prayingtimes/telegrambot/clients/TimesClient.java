@@ -15,7 +15,7 @@ import ru.mfilatov.prayingtimes.models.PrayerTimesCalculationMethod;
 @FeignClient(
     value = "timeskeeperClient",
     url = "${api.timeskeeper.url:localhost:8080/api/prayer-times}")
-public interface TimeskeeperClient {
+public interface TimesClient {
   @GetMapping(path = "/getTimes")
   ResponseEntity<PrayerTimes> getTimes(
       @RequestParam(value = "date") @Valid String date,

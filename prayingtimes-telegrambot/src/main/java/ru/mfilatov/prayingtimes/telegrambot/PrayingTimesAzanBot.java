@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
@@ -21,7 +22,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ru.mfilatov.prayingtimes.models.PrayerTimesCalculationMethod;
-import ru.mfilatov.prayingtimes.telegrambot.clients.TimeskeeperClient;
+import ru.mfilatov.prayingtimes.telegrambot.clients.LocationClient;
+import ru.mfilatov.prayingtimes.telegrambot.clients.TimesClient;
 import ru.mfilatov.prayingtimes.telegrambot.counter.RateLimiterService;
 import ru.mfilatov.prayingtimes.telegrambot.entities.User;
 import ru.mfilatov.prayingtimes.telegrambot.events.EventHandler;
@@ -33,26 +35,28 @@ public class PrayingTimesAzanBot
     implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
 
   private final TelegramClient telegramClient;
-  private final TimeskeeperClient client;
+  private final TimesClient timesClient;
+  private final LocationClient locationClient;
   private final EventHandler events;
   private final UserRepository users;
   private final RateLimiterService rateLimiter;
-  private final String botToken = "2025563729:AAGSpdD2QKEISDJylxxP7gmmf0CG8Izbw5k";
+  private final String botToken;
 
   private static final Pattern ALPHANUMERIC_PATTERN = Pattern.compile("^[a-zA-Z0-9\\s.,!/?-_]+$");
 
   public PrayingTimesAzanBot(
-      TimeskeeperClient client,
+      TimesClient timesClient,
+      LocationClient locationClient,
       EventHandler events,
       UserRepository users,
-      RateLimiterService rateLimiter
-      //      @Value("${BOT_TOKEN}") String token
-      ) {
-    this.client = client;
+      RateLimiterService rateLimiter,
+      @Value("${BOT_TOKEN}") String token) {
+    this.timesClient = timesClient;
+    this.locationClient = locationClient;
     this.events = events;
     this.users = users;
     this.rateLimiter = rateLimiter;
-    //    this.botToken = token;
+    this.botToken = token;
 
     this.telegramClient = new OkHttpTelegramClient(getBotToken());
   }
@@ -101,11 +105,16 @@ public class PrayingTimesAzanBot
         events.newUser(chatId);
         user = new User();
         user.setTelegramId(chatId);
-        user.setMethod("MWL");
+        user.setMethod(PrayerTimesCalculationMethod.MWL);
       }
 
       user.setLatitude(update.getMessage().getLocation().getLatitude());
       user.setLongitude(update.getMessage().getLocation().getLongitude());
+
+      var timezone = locationClient.getTimes(user.getLatitude(), user.getLongitude());
+      if (Objects.nonNull(timezone.getBody())) {
+        user.setTimezone(timezone.getBody().timezone());
+      }
 
       users.save(user);
       events.changeLocation(chatId);
@@ -168,7 +177,7 @@ public class PrayingTimesAzanBot
     if (Arrays.stream(PrayerTimesCalculationMethod.values())
         .anyMatch(a -> a.name().equals(method))) {
       var user = users.findByTelegramId(chatId);
-      user.setMethod(method);
+      user.setMethod(PrayerTimesCalculationMethod.fromName(method));
       users.save(user);
       sendMessage(chatId, "Calculation method was successfully set");
     } else {
@@ -178,23 +187,23 @@ public class PrayingTimesAzanBot
 
   private String getPrayingTimes(User user) {
     var response =
-        client.getTimes(
+        timesClient.getTimes(
             LocalDate.now().toString(),
             user.getLatitude(),
             user.getLongitude(),
-            PrayerTimesCalculationMethod.RUSSIA,
-            "Europe/Moscow");
+            user.getMethod(),
+            user.getTimezone());
     if (Objects.isNull(response.getBody())) {
       return "Unknown Error";
     }
 
     var times = response.getBody();
     return String.format(
-        "Date: %s Timezone: %s\nMethod: %s\nImsak:\t%s\nFajr:\t%s\nSunrise:\t%s\n"
+        "Date: %s\nTimezone: %s\nMethod: %s\nImsak:\t%s\nFajr:\t%s\nSunrise:\t%s\n"
             + "Dhuhr:\t%s\nAsr:\t%s\nSunset:\t%s\nMaghrib:\t%s\nIsha:\t%s,\nMidnight:\t%s",
         LocalDate.now().toString(),
-        "Europe/Moscow",
-        PrayerTimesCalculationMethod.RUSSIA.getDescription(),
+        user.getTimezone(),
+        user.getMethod().getDescription(),
         times.getImsak(),
         times.getFajr(),
         times.getSunrise(),

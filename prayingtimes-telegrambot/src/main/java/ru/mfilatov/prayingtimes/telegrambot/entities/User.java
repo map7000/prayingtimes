@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.mfilatov.prayingtimes.models.PrayerTimesCalculationMethod;
 
 @Setter
 @Getter
@@ -26,5 +27,6 @@ public class User {
   private Long telegramId;
   private Double latitude;
   private Double longitude;
-  private String method;
+  private PrayerTimesCalculationMethod method;
+  private String timezone;
 }

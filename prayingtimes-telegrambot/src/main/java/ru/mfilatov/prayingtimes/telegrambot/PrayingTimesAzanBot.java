@@ -163,13 +163,7 @@ public class PrayingTimesAzanBot
   }
 
   private void getMethods(Long chatId) {
-    sendMessage(
-        chatId,
-        String.join(
-            "\n",
-            Arrays.stream(PrayerTimesCalculationMethod.values())
-                .map(PrayerTimesCalculationMethod::getDescription)
-                .toList()));
+    sendMessage(chatId, POSSIBLE_CALCULATION_METHODS);
   }
 
   private void setMethod(String text, Long chatId) {

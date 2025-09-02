@@ -16,7 +16,7 @@ securityContext:
 service:
   port: 8080
 
-timeskeeperUrl: http://prayingtymes-timeskeeper-service:8080/api/prayer-times
+timeskeeperUrl: http://prayingtimes-timeskeeper-service:8080/api/prayer-times
 locationUrl: http://prayingtimes-timeskeeper-service:8080/api/location
 databaseUrl: jdbc:postgresql://postgresql:5432/postgres
 

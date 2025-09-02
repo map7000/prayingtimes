@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: prayingtymes-timeskeeper-config
+  name: prayingtimes-timeskeeper-config
   labels:
-    app: prayingtymes-timeskeeper
+    app: prayingtimes-timeskeeper
 data:
   java_options: {{ .Values.javaOptions | quote }}

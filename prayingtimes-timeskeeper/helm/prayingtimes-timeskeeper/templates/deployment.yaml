@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prayingtymes-timeskeeper-deployment
+  name: prayingtimes-timeskeeper-deployment
   labels:
-    app: prayingtymes-timeskeeper
+    app: prayingtimes-timeskeeper
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: prayingtymes-timeskeeper
+      app: prayingtimes-timeskeeper
   template:
     metadata:
       labels:
-        app: prayingtymes-timeskeeper
+        app: prayingtimes-timeskeeper
     spec:
       containers:
         - name: {{ .Chart.Name }}
@@ -31,7 +31,7 @@ spec:
             - name: JDK_JAVA_OPTIONS
               valueFrom:
                 configMapKeyRef:
-                  name: prayingtymes-timeskeeper-config
+                  name: prayingtimes-timeskeeper-config
                   key: java_options
       volumes:
         - name: tmp-volume

@@ -17,7 +17,7 @@ service:
   port: 8080
 
 timeskeeperUrl: http://prayingtymes-timeskeeper-service:8080/api/prayer-times
-locationUrl: http://prayingtymes-timeskeeper-service:8080/api/location
+locationUrl: http://prayingtimes-timeskeeper-service:8080/api/location
 databaseUrl: jdbc:postgresql://postgresql:5432/postgres
 
 botToken: ""

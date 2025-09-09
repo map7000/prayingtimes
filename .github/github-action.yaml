@@ -1,0 +1,129 @@
+name: CI/CD Pipeline
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+
+env:
+  MAVEN_OPTS: -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+  REGISTRY: docker.io
+  IMAGE_PREFIX: prayingtimes/
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run unit tests
+        run: mvn -B test --file pom.xml
+
+      - name: Run integration tests
+        run: mvn -B verify -DskipUnitTests=true --file pom.xml
+
+  analyze-changes:
+    name: Determine Changed Modules
+    runs-on: ubuntu-latest
+    outputs:
+      calculator-changed: ${{ steps.changed-files.outputs.prayingtimes_calculator }}
+      timeskeeper-changed: ${{ steps.changed-files.outputs.prayingtimes_timeskeeper }}
+      telegrambot-changed: ${{ steps.changed-files.outputs.prayingtimes_telegrambot }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Needed for git diff
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v42
+        with:
+          files: |
+            prayingtimes-calculator/**
+            prayingtimes-timeskeeper/**
+            prayingtimes-telegrambot/**
+
+  deploy-maven:
+    name: Deploy to Maven Central
+    needs: [test, analyze-changes]
+    if: github.event_name == 'push' && needs.analyze-changes.outputs.calculator-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build and Deploy
+        run: |
+          cd prayingtimes-calculator
+          mvn -B deploy -DskipTests \
+              -Dmaven.test.skip=true \
+              -P release \
+              -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} \
+              -Dgpg.keyid=${{ secrets.GPG_KEY_ID }} \
+              -Dgpg.homedir=${{ secrets.GPG_HOMEDIR }} \
+              --settings ../.mvn/settings.xml
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+
+  build-docker:
+    name: Build and Push Docker Images
+    needs: [test, analyze-changes]
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: ['timeskeeper', 'telegrambot']
+        include:
+          - service: 'timeskeeper'
+            changed: ${{ needs.analyze-changes.outputs.timeskeeper-changed }}
+            module: 'prayingtimes-timeskeeper'
+          - service: 'telegrambot'
+            changed: ${{ needs.analyze-changes.outputs.telegrambot-changed }}
+            module: 'prayingtimes-telegrambot'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'temurin'
+
+      - name: Login to Docker Hub
+        if: matrix.changed == 'true'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push
+        if: matrix.changed == 'true'
+        run: |
+          cd ${{ matrix.module }}
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          docker build -t $REGISTRY/$IMAGE_PREFIX${{ matrix.service }}:$VERSION .
+          docker push $REGISTRY/$IMAGE_PREFIX${{ matrix.service }}:$VERSION
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            docker tag $REGISTRY/$IMAGE_PREFIX${{ matrix.service }}:$VERSION $REGISTRY/$IMAGE_PREFIX${{ matrix.service }}:latest
+            docker push $REGISTRY/$IMAGE_PREFIX${{ matrix.service }}:latest
+          fi
+        env:
+          REGISTRY: ${{ env.REGISTRY }}
+          IMAGE_PREFIX: ${{ env.IMAGE_PREFIX }}

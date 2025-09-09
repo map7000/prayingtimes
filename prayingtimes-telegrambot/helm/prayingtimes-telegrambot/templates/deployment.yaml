@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prayingtimes-telegrambot-deployment
+  labels:
+    app: prayingtimes-telegrambot
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: prayingtimes-telegrambot
+  template:
+    metadata:
+      labels:
+        app: prayingtimes-telegrambot
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp-volume
+          env:
+            - name: JDK_JAVA_OPTIONS
+              valueFrom:
+                configMapKeyRef:
+                  name: prayingtymes-telegrambot-config
+                  key: java_options
+            - name: TIMESKEEPER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: prayingtymes-telegrambot-config
+                  key: timeskeeper_url
+            - name: LOCATION_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: prayingtymes-telegrambot-config
+                  key: location_url
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: prayingtymes-telegrambot-config
+                  key: database_url
+            - name: BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: prayingtymes-telegrambot-secret
+                  key: bot_token
+            - name: DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: prayingtymes-telegrambot-secret
+                  key: database_username
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: prayingtymes-telegrambot-secret
+                  key: database_password
+      volumes:
+        - name: tmp-volume
+          emptyDir:
+            sizeLimit: 100Mi

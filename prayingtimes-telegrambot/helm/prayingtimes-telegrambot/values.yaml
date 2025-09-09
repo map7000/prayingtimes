@@ -1,0 +1,27 @@
+replicaCount: 1
+
+image:
+  repository: docker.io/map7000/prayingtimes-telegrambot
+  pullPolicy: Always
+  tag: ""
+
+securityContext:
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+service:
+  port: 8080
+
+timeskeeperUrl: http://prayingtimes-timeskeeper-service:8080/api/prayer-times
+locationUrl: http://prayingtimes-timeskeeper-service:8080/api/location
+databaseUrl: jdbc:postgresql://postgresql:5432/postgres
+
+botToken: ""
+databaseUsername: postgres
+databasePassword: ""
+
+javaOptions: "-Dspring.config.location=classpath:/application.yaml -XX:InitialRAMPercentage=25.0 -XX:MaxRAMPercentage=75.0"

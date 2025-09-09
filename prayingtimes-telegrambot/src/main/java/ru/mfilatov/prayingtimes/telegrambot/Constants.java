@@ -4,10 +4,9 @@
 */
 package ru.mfilatov.prayingtimes.telegrambot;
 
-import ru.mfilatov.prayingtimes.models.PrayerTimesCalculationMethod;
-
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import ru.mfilatov.prayingtimes.models.PrayerTimesCalculationMethod;
 
 public class Constants {
   public static final String HELP_MESSAGE =
@@ -39,8 +38,8 @@ public class Constants {
             /set_method - Set calculation method
             /get_methods - Get possible calculation methods""";
 
-    public static final String POSSIBLE_CALCULATION_METHODS =
-            Arrays.stream(PrayerTimesCalculationMethod.values())
-                    .map(a -> "/set_method_" + a + " " + a.getDescription())
-                    .collect(Collectors.joining("\n"));
+  public static final String POSSIBLE_CALCULATION_METHODS =
+      Arrays.stream(PrayerTimesCalculationMethod.values())
+          .map(a -> "/set_method_" + a + " " + a.getDescription())
+          .collect(Collectors.joining("\n"));
 }

@@ -16,6 +16,10 @@ import ru.mfilatov.prayingtimes.timecalculator.clients.OpenStreetMapSearchClient
 @Service
 @RequiredArgsConstructor
 public class LocationService {
+    @Value("${TIMEZONE_API_KEY:}")
+    private String apiKey;
+
+
   private final OpenStreetMapSearchClient coordinatesClient;
   private final GeoTimeZoneClient timezoneClient;
 

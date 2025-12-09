@@ -33,6 +33,11 @@ spec:
                 configMapKeyRef:
                   name: prayingtimes-timeskeeper-config
                   key: java_options
+            - name: TIMEZONE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: timezone-api-secret
+                  key: api-key
       volumes:
         - name: tmp-volume
           emptyDir:

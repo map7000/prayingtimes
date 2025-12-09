@@ -1,4 +1,4 @@
-FROM docker.io/library/amazoncorretto:21-alpine
+FROM docker.io/library/amazoncorretto:25-alpine
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
 ARG JAR_FILE=target/*.jar

@@ -61,6 +61,13 @@
             <artifactId>jackson-core</artifactId>
         </dependency>
 
+        <!-- TimeShape for timezone data -->
+        <dependency>
+            <groupId>net.iakovlev</groupId>
+            <artifactId>timeshape</artifactId>
+            <version>2025b.28</version>
+        </dependency>
+
         <dependency>
             <groupId>ru.mfilatov.prayingtimes</groupId>
             <artifactId>prayingtimes-time-calculator</artifactId>

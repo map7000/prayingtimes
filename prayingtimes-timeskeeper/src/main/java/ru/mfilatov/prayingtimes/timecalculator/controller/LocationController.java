@@ -13,12 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.mfilatov.prayingtimes.models.dto.CoordinatesResponse;
 import ru.mfilatov.prayingtimes.models.dto.TimezoneResponse;
 import ru.mfilatov.prayingtimes.timecalculator.service.LocationService;
+import ru.mfilatov.prayingtimes.timecalculator.service.TimezoneService;
 
 @RestController
 @RequestMapping("/api/location")
 @RequiredArgsConstructor
 public class LocationController {
   private final LocationService locationService;
+  private final TimezoneService timezoneService;
 
   @GetMapping("/coordinates")
   public ResponseEntity<CoordinatesResponse> getCoordinates(
@@ -36,8 +38,7 @@ public class LocationController {
       @RequestParam(value = "longitude") double longitude) {
 
     validateCoordinates(latitude, longitude);
-
-    TimezoneResponse response = locationService.getTimezone(latitude, longitude);
+    TimezoneResponse response = timezoneService.getTimezone(latitude, longitude);
     return ResponseEntity.ok(response);
   }
 

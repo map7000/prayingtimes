@@ -5,19 +5,40 @@
 package ru.mfilatov.prayingtimes.timecalculator.clients;
 
 import java.util.List;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
 import ru.mfilatov.prayingtimes.timecalculator.model.openstreetmap.SearchJsonV2;
 
-@FeignClient(
-    value = "openStreetMapSearchClient",
-    url = "${location.api.base-url:https://nominatim.openstreetmap.org/}")
-public interface OpenStreetMapSearchClient {
+@Component
+public class OpenStreetMapSearchClient {
 
-  @GetMapping(path = "search")
-  List<SearchJsonV2> getCityLocation(
-      @RequestParam(value = "city") String city,
-      @RequestParam(value = "country") String country,
-      @RequestParam(value = "format") String format);
+  private final RestClient restClient;
+
+  public OpenStreetMapSearchClient(
+      RestClient.Builder restClientBuilder,
+      @Value("${location.api.base-url:https://nominatim.openstreetmap.org/}") String baseUrl,
+      @Value(
+              "${location.api.user-agent:PrayingTimesApp/1.0 (https://github.com/map7000/prayingtimes)}")
+          String userAgent) {
+    this.restClient =
+        restClientBuilder.baseUrl(baseUrl).defaultHeader(HttpHeaders.USER_AGENT, userAgent).build();
+  }
+
+  public List<SearchJsonV2> getCityLocation(String city, String country, String format) {
+    return restClient
+        .get()
+        .uri(
+            uriBuilder ->
+                uriBuilder
+                    .path("search")
+                    .queryParam("city", city)
+                    .queryParam("country", country)
+                    .queryParam("format", format)
+                    .build())
+        .retrieve()
+        .body(new ParameterizedTypeReference<>() {});
+  }
 }

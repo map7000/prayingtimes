@@ -4,17 +4,23 @@
 */
 package ru.mfilatov.prayingtimes.timecalculator.exception;
 
-import feign.FeignException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.ResourceAccessException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler(FeignException.class)
-  public ResponseEntity<String> handleFeignException(FeignException ex) {
-    return ResponseEntity.status(ex.status()).body("API error: " + ex.getMessage());
+  @ExceptionHandler(HttpStatusCodeException.class)
+  public ResponseEntity<String> handleHttpStatusCodeException(HttpStatusCodeException ex) {
+    return ResponseEntity.status(ex.getStatusCode()).body("API error: " + ex.getMessage());
+  }
+
+  @ExceptionHandler(ResourceAccessException.class)
+  public ResponseEntity<String> handleResourceAccessException(ResourceAccessException ex) {
+    return ResponseEntity.status(503).body("Service unavailable: " + ex.getMessage());
   }
 
   @ExceptionHandler(IllegalArgumentException.class)

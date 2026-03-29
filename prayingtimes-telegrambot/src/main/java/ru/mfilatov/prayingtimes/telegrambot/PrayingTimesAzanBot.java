@@ -111,7 +111,7 @@ public class PrayingTimesAzanBot
       user.setLatitude(update.getMessage().getLocation().getLatitude());
       user.setLongitude(update.getMessage().getLocation().getLongitude());
 
-      var timezone = locationClient.getTimes(user.getLatitude(), user.getLongitude());
+      var timezone = locationClient.getTimezone(user.getLatitude(), user.getLongitude());
       if (Objects.nonNull(timezone.getBody())) {
         user.setTimezone(timezone.getBody().timezone());
       }

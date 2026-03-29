@@ -4,23 +4,43 @@
 */
 package ru.mfilatov.prayingtimes.telegrambot.clients;
 
-import jakarta.validation.Valid;
-import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
 import ru.mfilatov.prayingtimes.models.PrayerTimes;
 import ru.mfilatov.prayingtimes.models.PrayerTimesCalculationMethod;
 
-@FeignClient(
-    value = "timeskeeperClient",
-    url = "${api.timeskeeper.url:localhost:8080/api/prayer-times}")
-public interface TimesClient {
-  @GetMapping(path = "/getTimes")
-  ResponseEntity<PrayerTimes> getTimes(
-      @RequestParam(value = "date") @Valid String date,
-      @RequestParam(value = "latitude") @Valid Double latitude,
-      @RequestParam(value = "longitude") @Valid Double longitude,
-      @RequestParam(value = "method") PrayerTimesCalculationMethod method,
-      @RequestParam(value = "timezone") String timezone);
+@Component
+public class TimesClient {
+
+  private final RestClient restClient;
+
+  public TimesClient(
+      RestClient.Builder restClientBuilder,
+      @Value("${api.timeskeeper.url:localhost:8080/api/prayer-times}") String baseUrl) {
+    this.restClient = restClientBuilder.baseUrl(baseUrl).build();
+  }
+
+  public ResponseEntity<PrayerTimes> getTimes(
+      String date,
+      Double latitude,
+      Double longitude,
+      PrayerTimesCalculationMethod method,
+      String timezone) {
+    return restClient
+        .get()
+        .uri(
+            uriBuilder ->
+                uriBuilder
+                    .path("/getTimes")
+                    .queryParam("date", date)
+                    .queryParam("latitude", latitude)
+                    .queryParam("longitude", longitude)
+                    .queryParam("method", method.name())
+                    .queryParam("timezone", timezone)
+                    .build())
+        .retrieve()
+        .toEntity(PrayerTimes.class);
+  }
 }

@@ -4,17 +4,34 @@
 */
 package ru.mfilatov.prayingtimes.telegrambot.clients;
 
-import jakarta.validation.Valid;
-import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
 import ru.mfilatov.prayingtimes.models.dto.TimezoneResponse;
 
-@FeignClient(value = "locationClient", url = "${api.location.url:localhost:8080/api/location}")
-public interface LocationClient {
-  @GetMapping(path = "/timezone")
-  ResponseEntity<TimezoneResponse> getTimes(
-      @RequestParam(value = "latitude") @Valid Double latitude,
-      @RequestParam(value = "longitude") @Valid Double longitude);
+@Component
+public class LocationClient {
+
+  private final RestClient restClient;
+
+  public LocationClient(
+      RestClient.Builder restClientBuilder,
+      @Value("${api.location.url:localhost:8080/api/location}") String baseUrl) {
+    this.restClient = restClientBuilder.baseUrl(baseUrl).build();
+  }
+
+  public ResponseEntity<TimezoneResponse> getTimezone(Double latitude, Double longitude) {
+    return restClient
+        .get()
+        .uri(
+            uriBuilder ->
+                uriBuilder
+                    .path("/timezone")
+                    .queryParam("latitude", latitude)
+                    .queryParam("longitude", longitude)
+                    .build())
+        .retrieve()
+        .toEntity(TimezoneResponse.class);
+  }
 }

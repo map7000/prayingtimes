@@ -27,6 +27,8 @@ A pure Java core library for calculating Qibla direction. This module will provi
 ### prayingtimes-models
 A Java package containing POJO (Plain Old Java Object) classes used across the application for API data transfer and internal processing.
 
+mvn clean install -pl prayingtimes-models -am
+
 ### prayingtimes-timeskeeper
 A Spring Boot application with REST API endpoints for calculating prayer times.
 

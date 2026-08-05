@@ -3,15 +3,7 @@ server:
   shutdown: graceful
   servlet:
     encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
     context-path: /
-
-aladhan:
- api:
-  base-url: https://api.aladhan.com/v1/timings
- delay: 1000
 
 timezone:
  api:

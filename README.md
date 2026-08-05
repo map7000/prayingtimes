@@ -14,16 +14,6 @@ The application is composed of the following microservices deployed as separate 
 
 ## Modules
 
-### prayingtimes-time-calculator
-**Status**: Under development (currently produces wrong results)
-
-A pure Java core library for calculating prayer times. This will serve as the foundation for accurate prayer time calculations once development is complete.
-
-### prayingtimes-qibla-calculator
-**Status**: Under development (currently produces wrong results)
-
-A pure Java core library for calculating Qibla direction. This module will provide accurate Qibla direction calculations when completed.
-
 ### prayingtimes-models
 A Java package containing POJO (Plain Old Java Object) classes used across the application for API data transfer and internal processing.
 

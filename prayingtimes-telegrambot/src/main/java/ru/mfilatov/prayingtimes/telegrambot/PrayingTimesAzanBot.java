@@ -198,14 +198,14 @@ public class PrayingTimesAzanBot
         LocalDate.now().toString(),
         user.getTimezone(),
         user.getMethod().getDescription(),
-        times.getImsak(),
-        times.getFajr(),
-        times.getSunrise(),
-        times.getDhuhr(),
-        times.getAsr(),
-        times.getSunset(),
-        times.getMaghrib(),
-        times.getIsha(),
-        times.getMidnight());
+        times.data().imsak(),
+        times.data().fajr(),
+        times.data().sunrise(),
+        times.data().dhuhr(),
+        times.data().asr(),
+        times.data().sunset(),
+        times.data().maghrib(),
+        times.data().isha(),
+        times.data().midnight());
   }
 }

@@ -44,6 +44,19 @@ A simple Telegram bot that provides prayer time information to users.
 - Integration with prayingtimes-timeskeeper for data retrieval
 - Webhook or long-polling configuration for Kubernetes deployment
 
+## All-in-one container
+
+`Dockerfile.all` builds a single image with the calculator, the web UI, timeskeeper and
+(optionally) the Telegram bot. The build context must contain all three repositories:
+
+```sh
+docker build -f prayingtimes/Dockerfile.all -t prayingtimes-all .
+docker run --rm -p 3000:3000 -p 8080:8080 prayingtimes-all
+# Web UI + calculator API: http://localhost:3000
+```
+
+See [docker/README.md](docker/README.md) for the optional Telegram bot environment.
+
 ## Kubernetes Deployment
 
 This application is designed to run on Kubernetes and is deployed using Helm charts.

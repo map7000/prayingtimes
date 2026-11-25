@@ -1,0 +1,72 @@
+# syntax=docker/dockerfile:1
+#
+# Single-image build for all prayingtimes components:
+#   - prayer-times-calculator (Rust API + static web UI)  :3000
+#   - prayingtimes-timeskeeper  (Java REST API)           :8080
+#   - prayingtimes-telegrambot  (Java, optional)           no port
+#   - prayer-times-web-ui       (static assets)
+#
+# Build from the directory that contains all three repositories:
+#   docker build -f prayingtimes/Dockerfile.all -t prayingtimes-all .
+#
+# The Telegram bot starts only when BOT_TOKEN is provided (it also needs the
+# database variables from prayingtimes-telegrambot/src/main/resources/application.yaml).
+
+############################
+# Web UI (static assets)
+############################
+FROM node:22-alpine AS web
+WORKDIR /src
+COPY prayer-times-web-ui/package.json prayer-times-web-ui/package-lock.json ./
+RUN npm ci --no-audit --no-fund
+COPY prayer-times-web-ui/ ./
+# Empty base => the UI calls /api/* and /health on the same origin that
+# serves it (the Rust service below).
+RUN VITE_API_BASE= npm run build
+
+############################
+# Prayer times calculator (Rust)
+############################
+FROM rust:1-alpine AS provider
+RUN apk add --no-cache build-base
+WORKDIR /src
+COPY prayer-times-calculator/Cargo.toml prayer-times-calculator/Cargo.lock ./
+COPY prayer-times-calculator/src ./src
+RUN cargo build --release --locked
+
+############################
+# Timeskeeper + Telegram bot (Java)
+############################
+FROM maven:3-eclipse-temurin-26 AS java
+WORKDIR /src
+COPY prayingtimes/pom.xml ./
+COPY prayingtimes/prayingtimes-models/pom.xml prayingtimes-models/
+COPY prayingtimes/prayingtimes-timeskeeper/pom.xml prayingtimes-timeskeeper/
+COPY prayingtimes/prayingtimes-telegrambot/pom.xml prayingtimes-telegrambot/
+COPY prayingtimes/prayingtimes-models/src prayingtimes-models/src
+COPY prayingtimes/prayingtimes-timeskeeper/src prayingtimes-timeskeeper/src
+COPY prayingtimes/prayingtimes-telegrambot/src prayingtimes-telegrambot/src
+RUN mvn -B -DskipTests package
+
+############################
+# Runtime
+############################
+FROM eclipse-temurin:26-jre-alpine
+
+RUN addgroup -S app && adduser -S -G app -u 1000 app
+WORKDIR /app
+
+COPY --from=provider --chown=app:app /src/target/release/prayer-times-calculator /usr/local/bin/prayer-times-calculator
+COPY --from=web --chown=app:app /src/dist /app/static
+COPY --from=java --chown=app:app /src/prayingtimes-timeskeeper/target/prayingtimes-timeskeeper-*.jar /app/timeskeeper.jar
+COPY --from=java --chown=app:app /src/prayingtimes-telegrambot/target/prayingtimes-telegrambot-*.jar /app/telegrambot.jar
+COPY --chown=app:app prayingtimes/docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+RUN chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/prayer-times-calculator
+
+USER app
+ENV STATIC_DIR=/app/static \
+    PRAYER_TIMES_API_URL=http://127.0.0.1:3000
+
+EXPOSE 3000 8080
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

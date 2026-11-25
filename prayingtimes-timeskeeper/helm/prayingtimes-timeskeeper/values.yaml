@@ -16,7 +16,6 @@ securityContext:
 service:
   port: 8080
 
-env:
-  timezoneApiKey: "TIMEZONE_API_KEY"
+prayerTimesApiUrl: "http://prayer-times-calculator:3000"
 
 javaOptions: "-Dspring.config.location=classpath:/application.yaml -XX:InitialRAMPercentage=25.0 -XX:MaxRAMPercentage=75.0"

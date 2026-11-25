@@ -42,7 +42,7 @@
 
         <!-- Dependency versions -->
         <spring-boot.version>4.1.0</spring-boot.version>
-        <lombok.version>1.18.46</lombok.version>
+        <lombok.version>1.18.48</lombok.version>
         <junit.version>6.1.0</junit.version>
         <assertj.version>4.0.0-M1</assertj.version>
         <telegram-bot-api.version>9.5.0</telegram-bot-api.version>

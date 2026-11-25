@@ -22,13 +22,16 @@ mvn clean install -pl prayingtimes-models -am
 ### prayingtimes-timeskeeper
 A Spring Boot application with REST API endpoints for calculating prayer times.
 
-**Current Implementation**: Uses the AlAdhan public internet API as a temporary solution while the native calculation library is under development.
+**Current Implementation**: Delegates calculations to the
+[prayer-times-calculator](https://github.com/map7000/prayer-times-calculator) service. The provider is configured with
+`prayer-times.api.base-url` (environment variable `PRAYER_TIMES_API_URL`, default
+`http://localhost:3000`).
 
 **Features**:
 - RESTful API endpoints for prayer time calculations
 - Support for multiple calculation methods
-- Location-based time calculations
-- Integration point for the native calculation library (when ready)
+- Location-based time calculations with IANA timezone support
+- Hanafi Asr calculation, matching the previous provider behaviour
 - Health checks and metrics endpoints for Kubernetes
 
 ### prayingtimes-telegrambot
@@ -55,7 +58,13 @@ This application is designed to run on Kubernetes and is deployed using Helm cha
 
 ## Current Development Status
 
-⚠️ **Note**: The core calculation libraries (time-calculator and qibla-calculator) are currently under development and produce incorrect results. The system currently relies on the AlAdhan API through the timeskeeper module for accurate prayer times.
+Prayer times are calculated by the external
+[prayer-times-calculator](https://github.com/map7000/prayer-times-calculator) service (Rust). The timeskeeper module
+translates the public API request (IANA timezone, calculation method enum) into the provider's
+format and exposes the result unchanged to clients.
+
+The qibla calculator is not part of the running application yet; the provider already exposes a
+qibla endpoint that can be wired in when needed.
 
 ## Monitoring and Logging
 

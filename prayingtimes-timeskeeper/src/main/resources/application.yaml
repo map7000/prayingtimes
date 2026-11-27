@@ -2,21 +2,11 @@ server:
   port: 8080
   shutdown: graceful
   servlet:
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
     context-path: /
 
-aladhan:
- api:
-  base-url: https://api.aladhan.com/v1/timings
- delay: 1000
-
-timezone:
- api:
-  base-url: https://api.geotimezone.com/public
- delay: 1000
+prayer-times:
+  api:
+    base-url: ${PRAYER_TIMES_API_URL:http://localhost:3000}
 
 location:
   api:

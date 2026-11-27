@@ -27,10 +27,8 @@
     </scm>
 
     <modules>
-        <module>prayingtimes-time-calculator</module>
         <module>prayingtimes-timeskeeper</module>
         <module>prayingtimes-telegrambot</module>
-        <module>prayingtimes-qibla-calculator</module>
         <module>prayingtimes-models</module>
     </modules>
 
@@ -43,17 +41,16 @@
         <maven.compiler.proc>full</maven.compiler.proc>
 
         <!-- Dependency versions -->
-        <spring-boot.version>4.0.3</spring-boot.version>
-        <lombok.version>1.18.44</lombok.version>
-        <junit.version>6.0.3</junit.version>
-        <assertj.version>3.27.7</assertj.version>
-        <mapstruct.version>1.6.3</mapstruct.version>
+        <spring-boot.version>4.1.0</spring-boot.version>
+        <lombok.version>1.18.48</lombok.version>
+        <junit.version>6.1.0</junit.version>
+        <assertj.version>4.0.0-M1</assertj.version>
         <telegram-bot-api.version>9.5.0</telegram-bot-api.version>
 
         <!-- Plugin Versions -->
         <compiler.version>3.15.0</compiler.version>
-        <surefire.version>3.5.5</surefire.version>
-        <spotless.version>3.3.0</spotless.version>
+        <surefire.version>3.6.0-M1</surefire.version>
+        <spotless.version>3.7.0</spotless.version>
         <source.version>3.4.0</source.version>
     </properties>
 
@@ -93,11 +90,6 @@
                 <scope>test</scope>
             </dependency>
 
-            <dependency>
-                <groupId>org.mapstruct</groupId>
-                <artifactId>mapstruct</artifactId>
-                <version>${mapstruct.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -115,11 +107,6 @@
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok</artifactId>
                                 <version>${lombok.version}</version>
-                            </path>
-                            <path>
-                                <groupId>org.mapstruct</groupId>
-                                <artifactId>mapstruct-processor</artifactId>
-                                <version>${mapstruct.version}</version>
                             </path>
                         </annotationProcessorPaths>
                     </configuration>

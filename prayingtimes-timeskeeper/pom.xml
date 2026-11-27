@@ -31,15 +31,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jackson</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-        </dependency>
-
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -56,28 +47,18 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-        </dependency>
 
         <!-- TimeShape for timezone data -->
         <dependency>
             <groupId>net.iakovlev</groupId>
             <artifactId>timeshape</artifactId>
-            <version>2025b.28</version>
+            <version>2026b.29</version>
         </dependency>
 
         <dependency>
             <groupId>ru.mfilatov.prayingtimes</groupId>
             <artifactId>prayingtimes-models</artifactId>
             <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>ru.mfilatov.prayingtimes</groupId>
-            <artifactId>prayingtimes-time-calculator</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 

@@ -25,6 +25,7 @@ replay_pid*
 
 # IDE
 .idea
+.vscode
 
 target
 

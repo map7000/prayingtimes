@@ -14,16 +14,6 @@ The application is composed of the following microservices deployed as separate 
 
 ## Modules
 
-### prayingtimes-time-calculator
-**Status**: Under development (currently produces wrong results)
-
-A pure Java core library for calculating prayer times. This will serve as the foundation for accurate prayer time calculations once development is complete.
-
-### prayingtimes-qibla-calculator
-**Status**: Under development (currently produces wrong results)
-
-A pure Java core library for calculating Qibla direction. This module will provide accurate Qibla direction calculations when completed.
-
 ### prayingtimes-models
 A Java package containing POJO (Plain Old Java Object) classes used across the application for API data transfer and internal processing.
 
@@ -32,13 +22,16 @@ mvn clean install -pl prayingtimes-models -am
 ### prayingtimes-timeskeeper
 A Spring Boot application with REST API endpoints for calculating prayer times.
 
-**Current Implementation**: Uses the AlAdhan public internet API as a temporary solution while the native calculation library is under development.
+**Current Implementation**: Delegates calculations to the
+[prayer-times-calculator](https://github.com/map7000/prayer-times-calculator) service. The provider is configured with
+`prayer-times.api.base-url` (environment variable `PRAYER_TIMES_API_URL`, default
+`http://localhost:3000`).
 
 **Features**:
 - RESTful API endpoints for prayer time calculations
 - Support for multiple calculation methods
-- Location-based time calculations
-- Integration point for the native calculation library (when ready)
+- Location-based time calculations with IANA timezone support
+- Hanafi Asr calculation, matching the previous provider behaviour
 - Health checks and metrics endpoints for Kubernetes
 
 ### prayingtimes-telegrambot
@@ -50,6 +43,19 @@ A simple Telegram bot that provides prayer time information to users.
 - Support for user preference management (calculation methods, etc.)
 - Integration with prayingtimes-timeskeeper for data retrieval
 - Webhook or long-polling configuration for Kubernetes deployment
+
+## All-in-one container
+
+`Dockerfile.all` builds a single image with the calculator, the web UI, timeskeeper and
+(optionally) the Telegram bot. The build context must contain all three repositories:
+
+```sh
+docker build -f prayingtimes/Dockerfile.all -t prayingtimes-all .
+docker run --rm -p 3000:3000 -p 8080:8080 prayingtimes-all
+# Web UI + calculator API: http://localhost:3000
+```
+
+See [docker/README.md](docker/README.md) for the optional Telegram bot environment.
 
 ## Kubernetes Deployment
 
@@ -65,7 +71,13 @@ This application is designed to run on Kubernetes and is deployed using Helm cha
 
 ## Current Development Status
 
-⚠️ **Note**: The core calculation libraries (time-calculator and qibla-calculator) are currently under development and produce incorrect results. The system currently relies on the AlAdhan API through the timeskeeper module for accurate prayer times.
+Prayer times are calculated by the external
+[prayer-times-calculator](https://github.com/map7000/prayer-times-calculator) service (Rust). The timeskeeper module
+translates the public API request (IANA timezone, calculation method enum) into the provider's
+format and exposes the result unchanged to clients.
+
+The qibla calculator is not part of the running application yet; the provider already exposes a
+qibla endpoint that can be wired in when needed.
 
 ## Monitoring and Logging
 

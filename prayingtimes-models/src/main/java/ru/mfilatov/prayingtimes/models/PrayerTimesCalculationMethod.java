@@ -36,6 +36,38 @@ public enum PrayerTimesCalculationMethod {
   @Getter private final int code;
   @Getter private final String description;
 
+  /**
+   * Name used by the prayer-times-calculator service for this method. Kept out of the JSON
+   * representation on purpose so the public API keeps exposing the enum names.
+   */
+  public String providerName() {
+    return switch (this) {
+      case JAFARI -> "jafari";
+      case KARACHI -> "karachi";
+      case ISNA -> "isna";
+      case MWL -> "mwl";
+      case UMM_AL_QURA -> "makkah";
+      case EGYPTIAN -> "egypt";
+      case TEHRAN -> "tehran";
+      case GULF -> "gulf";
+      case KUWAIT -> "kuwait";
+      case QATAR -> "qatar";
+      case SINGAPORE -> "singapore";
+      case FRANCE -> "france";
+      case TURKEY -> "turkey";
+      case RUSSIA -> "russia";
+      case MOONSIGHTING -> "moonsighting";
+      case DUBAI -> "dubai";
+      case MALAYSIA -> "jakim";
+      case TUNISIA -> "tunisia";
+      case ALGERIA -> "algeria";
+      case INDONESIA -> "kemenag";
+      case MOROCCO -> "morocco";
+      case LISBON -> "portugal";
+      case JORDAN -> "jordan";
+    };
+  }
+
   public static PrayerTimesCalculationMethod fromCode(int code) {
     for (PrayerTimesCalculationMethod method : values()) {
       if (method.code == code) {

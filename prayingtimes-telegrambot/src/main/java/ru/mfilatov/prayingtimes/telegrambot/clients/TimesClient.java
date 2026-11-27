@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import ru.mfilatov.prayingtimes.models.PrayerTimes;
 import ru.mfilatov.prayingtimes.models.PrayerTimesCalculationMethod;
+import ru.mfilatov.prayingtimes.models.dto.PrayerTimesResponse;
 
 @Component
 public class TimesClient {
@@ -22,7 +22,7 @@ public class TimesClient {
     this.restClient = restClientBuilder.baseUrl(baseUrl).build();
   }
 
-  public ResponseEntity<PrayerTimes> getTimes(
+  public ResponseEntity<PrayerTimesResponse> getTimes(
       String date,
       Double latitude,
       Double longitude,
@@ -41,6 +41,6 @@ public class TimesClient {
                     .queryParam("timezone", timezone)
                     .build())
         .retrieve()
-        .toEntity(PrayerTimes.class);
+        .toEntity(PrayerTimesResponse.class);
   }
 }

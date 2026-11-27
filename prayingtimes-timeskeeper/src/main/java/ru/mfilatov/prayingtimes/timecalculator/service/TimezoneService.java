@@ -4,6 +4,8 @@
 */
 package ru.mfilatov.prayingtimes.timecalculator.service;
 
+import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -29,5 +31,22 @@ public class TimezoneService {
     String offset = ZonedDateTime.now(targetZone).getOffset().getId();
 
     return new TimezoneResponse(targetZone.getId(), offset);
+  }
+
+  /**
+   * UTC offset in hours for the given IANA timezone on the given date, which is the format the
+   * prayer-times-calculator service expects. Uses the date (not "now") so DST is accounted for.
+   */
+  public double getOffsetHours(String timezone, LocalDate date) {
+    return offsetHours(timezone, date);
+  }
+
+  static double offsetHours(String timezone, LocalDate date) {
+    try {
+      ZoneId zone = ZoneId.of(timezone);
+      return zone.getRules().getOffset(date.atStartOfDay()).getTotalSeconds() / 3600.0;
+    } catch (DateTimeException e) {
+      throw new IllegalArgumentException("Unknown timezone: " + timezone, e);
+    }
   }
 }
